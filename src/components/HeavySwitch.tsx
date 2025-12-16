@@ -1,6 +1,7 @@
 'use client';
 
-import { motion, useSpring, useTransform } from 'framer-motion';
+import { useRef, useCallback } from 'react';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { StatusLED } from './StatusLED';
 import { AlertTriangle } from 'lucide-react';
 
@@ -14,12 +15,14 @@ interface HeavySwitchProps {
 }
 
 export function HeavySwitch({ label, isOn, onToggle, onSound, offSound, checkedAt }: HeavySwitchProps) {
-    // Spring animation for heavy feel
-    const springConfig = { stiffness: 300, damping: 20, mass: 1.5 };
-    const x = useSpring(isOn ? 40 : 0, springConfig);
+    const constraintsRef = useRef<HTMLButtonElement>(null);
+    const x = useMotionValue(isOn ? 40 : 0);
     const backgroundColor = useTransform(x, [0, 40], ['#1a1a1a', '#0d2818']);
 
-    const handleClick = () => {
+    // Track if we're currently dragging
+    const isDragging = useRef(false);
+
+    const handleToggle = useCallback(() => {
         // Vibration feedback
         if (typeof navigator !== 'undefined' && navigator.vibrate) {
             navigator.vibrate(50);
@@ -33,7 +36,36 @@ export function HeavySwitch({ label, isOn, onToggle, onSound, offSound, checkedA
         }
 
         onToggle();
-    };
+    }, [isOn, onSound, offSound, onToggle]);
+
+    const handleDragEnd = useCallback(() => {
+        const currentX = x.get();
+        const threshold = 20;
+
+        // Determine if state should change based on drag position
+        if (isOn && currentX < threshold) {
+            // Was ON, dragged to OFF position
+            handleToggle();
+            animate(x, 0, { type: 'spring', stiffness: 300, damping: 20, mass: 1.5 });
+        } else if (!isOn && currentX > threshold) {
+            // Was OFF, dragged to ON position
+            handleToggle();
+            animate(x, 40, { type: 'spring', stiffness: 300, damping: 20, mass: 1.5 });
+        } else {
+            // Snap back to original position
+            animate(x, isOn ? 40 : 0, { type: 'spring', stiffness: 300, damping: 20, mass: 1.5 });
+        }
+
+        isDragging.current = false;
+    }, [isOn, x, handleToggle]);
+
+    const handleClick = useCallback(() => {
+        // Only toggle if we weren't dragging
+        if (!isDragging.current) {
+            handleToggle();
+            animate(x, isOn ? 0 : 40, { type: 'spring', stiffness: 300, damping: 20, mass: 1.5 });
+        }
+    }, [isOn, x, handleToggle]);
 
     return (
         <motion.div
@@ -75,17 +107,18 @@ export function HeavySwitch({ label, isOn, onToggle, onSound, offSound, checkedA
                 )}
             </div>
 
-            {/* Heavy Toggle Switch */}
+            {/* Heavy Toggle Switch - Now with drag support */}
             <button
+                ref={constraintsRef}
                 onClick={handleClick}
-                className="relative w-20 h-10 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                className="relative w-20 h-10 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500/50 touch-none"
                 style={{
                     background: 'linear-gradient(145deg, #1a1a1a, #0d0d0d)',
                     boxShadow: `
-            inset 0 2px 4px rgba(0,0,0,0.8),
-            inset 0 -1px 2px rgba(255,255,255,0.05),
-            0 4px 8px rgba(0,0,0,0.5)
-          `,
+                        inset 0 2px 4px rgba(0,0,0,0.8),
+                        inset 0 -1px 2px rgba(255,255,255,0.05),
+                        0 4px 8px rgba(0,0,0,0.5)
+                    `,
                 }}
             >
                 {/* Track */}
@@ -95,9 +128,9 @@ export function HeavySwitch({ label, isOn, onToggle, onSound, offSound, checkedA
                     transition={{ duration: 0.3 }}
                 />
 
-                {/* Knob */}
+                {/* Draggable Knob */}
                 <motion.div
-                    className="absolute top-1 left-1 w-8 h-8 rounded-full"
+                    className="absolute top-1 left-1 w-8 h-8 rounded-full cursor-grab active:cursor-grabbing"
                     style={{
                         x,
                         background: isOn
@@ -105,16 +138,23 @@ export function HeavySwitch({ label, isOn, onToggle, onSound, offSound, checkedA
                             : 'linear-gradient(145deg, #3a3a3a, #1a1a1a)',
                         boxShadow: isOn
                             ? `
-                0 2px 4px rgba(0,0,0,0.6),
-                0 0 10px rgba(34, 197, 94, 0.5),
-                inset 0 1px 2px rgba(255,255,255,0.1)
-              `
+                                0 2px 4px rgba(0,0,0,0.6),
+                                0 0 10px rgba(34, 197, 94, 0.5),
+                                inset 0 1px 2px rgba(255,255,255,0.1)
+                            `
                             : `
-                0 2px 4px rgba(0,0,0,0.6),
-                inset 0 1px 2px rgba(255,255,255,0.05),
-                inset 0 -1px 2px rgba(0,0,0,0.3)
-              `,
+                                0 2px 4px rgba(0,0,0,0.6),
+                                inset 0 1px 2px rgba(255,255,255,0.05),
+                                inset 0 -1px 2px rgba(0,0,0,0.3)
+                            `,
                     }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 40 }}
+                    dragElastic={0}
+                    dragMomentum={false}
+                    onDragStart={() => { isDragging.current = true; }}
+                    onDragEnd={handleDragEnd}
+                    whileDrag={{ scale: 1.05 }}
                 >
                     {/* Knob texture */}
                     <div className="absolute inset-2 rounded-full border border-zinc-600/30" />
