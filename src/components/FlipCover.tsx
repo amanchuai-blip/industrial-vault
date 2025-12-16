@@ -20,7 +20,7 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
             <AnimatePresence>
                 {isLocked && (
                     <motion.div
-                        className="absolute inset-0 z-10 overflow-hidden rounded-lg cursor-not-allowed"
+                        className="absolute inset-0 z-10 rounded-lg cursor-not-allowed"
                         initial={{ rotateX: -90 }}
                         animate={{ rotateX: 0 }}
                         exit={{ rotateX: -90 }}
