@@ -37,7 +37,7 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                     >
                         {/* Cover surface */}
                         <div
-                            className="absolute inset-0 flex flex-col items-center justify-center gap-2 py-4"
+                            className="absolute inset-0 flex flex-col items-center justify-center gap-2 pt-6 pb-4"
                             style={{
                                 background: 'linear-gradient(145deg, rgba(239, 68, 68, 0.15), rgba(127, 29, 29, 0.2))',
                                 backdropFilter: 'blur(4px)',
