@@ -20,7 +20,7 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
             <AnimatePresence>
                 {isLocked && (
                     <motion.div
-                        className="absolute inset-0 z-10 rounded-lg cursor-not-allowed"
+                        className="absolute inset-0 z-10 overflow-hidden rounded-lg cursor-not-allowed"
                         initial={{ rotateX: -90 }}
                         animate={{ rotateX: 0 }}
                         exit={{ rotateX: -90 }}
@@ -37,16 +37,16 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                     >
                         {/* Cover surface */}
                         <div
-                            className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6"
+                            className="absolute inset-0 flex flex-col items-center justify-center gap-2 py-4"
                             style={{
                                 background: 'linear-gradient(145deg, rgba(239, 68, 68, 0.15), rgba(127, 29, 29, 0.2))',
                                 backdropFilter: 'blur(4px)',
                                 border: '2px solid rgba(239, 68, 68, 0.4)',
                                 boxShadow: `
-                  inset 0 2px 4px rgba(255,255,255,0.05),
-                  inset 0 -2px 4px rgba(0,0,0,0.3),
-                  0 4px 8px rgba(0,0,0,0.4)
-                `,
+                                    inset 0 2px 4px rgba(255,255,255,0.05),
+                                    inset 0 -2px 4px rgba(0,0,0,0.3),
+                                    0 4px 8px rgba(0,0,0,0.4)
+                                `,
                             }}
                         >
                             {/* Warning stripes */}
@@ -54,20 +54,18 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                                 className="absolute inset-0 opacity-10"
                                 style={{
                                     background: `repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 10px,
-                    rgba(239, 68, 68, 0.3) 10px,
-                    rgba(239, 68, 68, 0.3) 20px
-                  )`,
+                                        45deg,
+                                        transparent,
+                                        transparent 10px,
+                                        rgba(239, 68, 68, 0.3) 10px,
+                                        rgba(239, 68, 68, 0.3) 20px
+                                    )`,
                                 }}
                             />
 
-                            {/* Lock icon */}
+                            {/* Lock icon - opacity animation only to avoid cutoff */}
                             <motion.div
-                                className="flex-shrink-0"
                                 animate={{
-                                    scale: [1, 1.1, 1],
                                     opacity: [0.7, 1, 0.7]
                                 }}
                                 transition={{ duration: 2, repeat: Infinity }}
@@ -76,14 +74,14 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                             </motion.div>
 
                             {/* Warning text */}
-                            <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="flex items-center gap-2">
                                 <ShieldAlert className="w-4 h-4 text-red-400" />
                                 <span className="font-mono text-xs tracking-[0.2em] text-red-400 uppercase">
                                     Safety Lock Active
                                 </span>
                             </div>
 
-                            <span className="font-mono text-[10px] tracking-wider text-red-500/60 uppercase text-center flex-shrink-0">
+                            <span className="font-mono text-[10px] tracking-wider text-red-500/60 uppercase text-center">
                                 Complete all checks to unlock
                             </span>
                         </div>
