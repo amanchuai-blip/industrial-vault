@@ -37,7 +37,7 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                     >
                         {/* Cover surface */}
                         <div
-                            className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+                            className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6"
                             style={{
                                 background: 'linear-gradient(145deg, rgba(239, 68, 68, 0.15), rgba(127, 29, 29, 0.2))',
                                 backdropFilter: 'blur(4px)',
@@ -65,24 +65,25 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
 
                             {/* Lock icon */}
                             <motion.div
+                                className="flex-shrink-0"
                                 animate={{
                                     scale: [1, 1.1, 1],
                                     opacity: [0.7, 1, 0.7]
                                 }}
                                 transition={{ duration: 2, repeat: Infinity }}
                             >
-                                <Lock className="w-8 h-8 text-red-500" />
+                                <Lock className="w-6 h-6 text-red-500" />
                             </motion.div>
 
                             {/* Warning text */}
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-shrink-0">
                                 <ShieldAlert className="w-4 h-4 text-red-400" />
-                                <span className="font-mono text-xs tracking-[0.3em] text-red-400 uppercase">
+                                <span className="font-mono text-xs tracking-[0.2em] text-red-400 uppercase">
                                     Safety Lock Active
                                 </span>
                             </div>
 
-                            <span className="font-mono text-[10px] tracking-wider text-red-500/60 uppercase">
+                            <span className="font-mono text-[10px] tracking-wider text-red-500/60 uppercase text-center flex-shrink-0">
                                 Complete all checks to unlock
                             </span>
                         </div>
