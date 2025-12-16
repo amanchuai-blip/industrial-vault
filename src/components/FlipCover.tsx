@@ -37,7 +37,7 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                     >
                         {/* Cover surface */}
                         <div
-                            className="absolute inset-0 flex flex-col items-center justify-center gap-2 pt-6 pb-4"
+                            className="absolute inset-0 flex flex-col items-center justify-center gap-1 pt-8 pb-3"
                             style={{
                                 background: 'linear-gradient(145deg, rgba(239, 68, 68, 0.15), rgba(127, 29, 29, 0.2))',
                                 backdropFilter: 'blur(4px)',
@@ -63,14 +63,15 @@ export function FlipCover({ isLocked, children }: FlipCoverProps) {
                                 }}
                             />
 
-                            {/* Lock icon - opacity animation only to avoid cutoff */}
+                            {/* Lock icon - smaller with margin for visibility */}
                             <motion.div
+                                className="mt-2"
                                 animate={{
                                     opacity: [0.7, 1, 0.7]
                                 }}
                                 transition={{ duration: 2, repeat: Infinity }}
                             >
-                                <Lock className="w-6 h-6 text-red-500" />
+                                <Lock className="w-5 h-5 text-red-500" />
                             </motion.div>
 
                             {/* Warning text */}
